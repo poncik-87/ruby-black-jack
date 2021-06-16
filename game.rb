@@ -26,9 +26,18 @@ class Game
     @players.unshift(UserPlayer.new(name.capitalize))
   end
 
+  def score_report
+    @players.each { |player| player.score_report }
+  end
+
+  def looser
+    @players.detect { |player| player.score <= 0 }
+  end
+
   def play
     @deck = Deck.new
     counter = 0
+    make_deposit
 
     loop do
       player = @players[counter]
@@ -66,6 +75,7 @@ class Game
     @players.each { |player| player.cards_report }
     winner = choose_winner(@players)
     if (winner)
+      winner.set_off_bet
       puts "Выиграл #{winner.name}"
     else
       puts 'Ничья'
@@ -74,5 +84,9 @@ class Game
 
   def reset
     @players.each { |player| player.drop_cards }
+  end
+
+  def make_deposit
+    @players.each { |player| player.make_deposit }
   end
 end
