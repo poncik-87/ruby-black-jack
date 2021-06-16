@@ -19,10 +19,7 @@ class Player
   end
 
   def cards_report
-    cards_s = cards
-      .map { |card| card.to_s}
-      .join(', ')
-
+    cards_s = cards.map(&:to_s).join(', ')
     puts "#{name}, карты: #{cards_s}"
   end
 

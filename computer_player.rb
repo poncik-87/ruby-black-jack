@@ -1,5 +1,5 @@
-require './player.rb'
-require './rules.rb'
+require './player'
+require './rules'
 
 ENOUGH_SCORE = 17
 
@@ -13,9 +13,7 @@ class ComputerPlayer < Player
   def make_turn(turns)
     return :deal_cards if turns.first == :deal_cards
 
-    if (turns.include?(:add_card) && calc_score(self) < ENOUGH_SCORE)
-      return :add_card
-    end
+    return :add_card if turns.include?(:add_card) && calc_score(self) < ENOUGH_SCORE
 
     :skip
   end

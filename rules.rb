@@ -1,5 +1,5 @@
-require './user_player.rb'
-require './computer_player.rb'
+require './user_player'
+require './computer_player'
 
 RANK_VALUE = {
   '2' => 2,
@@ -14,35 +14,36 @@ RANK_VALUE = {
   'J' => 10,
   'Q' => 10,
   'K' => 10,
-  'A' => 11,
-}
+  'A' => 11
+}.freeze
 ACE_VALUES_DIF = 10
 MAX_SCORE = 21
 
 module Rules
+  # rubocop:disable Metrics/CyclomaticComplexity
   def player_turns(player)
     return [:deal_cards] if player.cards.empty?
-    return [:skip, :add_card, :show_cards] if player.cards.length == 2 && player.instance_of?(UserPlayer)
-    return [:skip, :show_cards] if player.instance_of?(UserPlayer)
-    return [:skip, :add_card] if player.cards.length == 2 && player.instance_of?(ComputerPlayer)
+    return %i[skip add_card show_cards] if player.cards.length == 2 && player.instance_of?(UserPlayer)
+    return %i[skip show_cards] if player.instance_of?(UserPlayer)
+    return %i[skip add_card] if player.cards.length == 2 && player.instance_of?(ComputerPlayer)
     return [:skip] if player.instance_of?(ComputerPlayer)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def choose_winner(players)
     return if equal_score?(players)
 
-    players
-      .sort { |a, b| calc_score(a) <=> calc_score(b)}
-      .last
+    players.max { |a, b| calc_score(a) <=> calc_score(b) }
   end
 
   def equal_score?(players)
     score = calc_score(players.first)
-    !players.any? { |player| calc_score(player) != score }
+    players.none? { |player| calc_score(player) != score }
   end
 
   def calc_score(player)
-    sum, aces = 0, 0
+    sum = 0
+    aces = 0
 
     player.cards.each do |card|
       aces += 1 if card.rank == :A
